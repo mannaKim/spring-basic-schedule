@@ -22,4 +22,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return scheduleRepository.saveSchedule(schedule);
     }
+
+    @Override
+    public ScheduleResponseDto findScheduleById(Long id) {
+
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+
+        return new ScheduleResponseDto(schedule);
+    }
 }
