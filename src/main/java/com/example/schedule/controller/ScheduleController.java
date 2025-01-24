@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/schedule")
 public class ScheduleController {
@@ -29,5 +31,13 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleService.findScheduleById(id), HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ScheduleResponseDto>> findSchedulesByFilters(
+            @RequestParam(required = false) String authorName,
+            @RequestParam(required = false) String updatedAt
+    ) {
 
+        List<ScheduleResponseDto> schedules = scheduleService.findSchedulesByFilters(authorName, updatedAt);
+        return new ResponseEntity<>(schedules, HttpStatus.OK);
+    }
 }
