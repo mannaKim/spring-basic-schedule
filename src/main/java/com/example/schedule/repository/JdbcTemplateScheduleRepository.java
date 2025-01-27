@@ -43,19 +43,17 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
-        /*
-        // insert한 결과 호출해서 createdAt, updatedAt 조회
+        // ResponseDto에 createdAt, updatedAt를 전달하기 위해, insert한 결과 조회
         String sql = "SELECT created_at, updated_at FROM schedule WHERE id = ?";
         Map<String, Object> result = jdbcTemplate.queryForMap(sql, key);
 
         LocalDateTime createdAt = ((Timestamp) result.get("created_at")).toLocalDateTime();
         LocalDateTime updatedAt = ((Timestamp) result.get("updated_at")).toLocalDateTime();
-        */
-        
+
         return new ScheduleResponseDto(
                 key.longValue(),
-                LocalDateTime.now(),    // created_at (가정)
-                LocalDateTime.now(),    // updated_at (가정)
+                createdAt,
+                updatedAt,
                 schedule.getAuthorName(),
                 schedule.getTask()
         );
@@ -93,6 +91,18 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         sql += " ORDER BY updated_at DESC";
 
         return jdbcTemplate.query(sql, scheduleResponseDtoRowMapper(), params.toArray());
+    }
+
+    @Override
+    public String findPasswordById(Long id) {
+        String sql = "SELECT password FROM schedule WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, String.class, id);
+    }
+
+    @Override
+    public int deleteSchedule(Long id) {
+        String sql = "DELETE FROM schedule WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 
     private RowMapper<Schedule> scheduleRowMapper() {

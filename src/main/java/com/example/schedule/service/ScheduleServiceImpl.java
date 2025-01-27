@@ -4,7 +4,9 @@ import com.example.schedule.dto.ScheduleRequestDto;
 import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.entity.Schedule;
 import com.example.schedule.repository.ScheduleRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -31,5 +33,20 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<ScheduleResponseDto> findSchedulesByFilters(String authorName, String updatedAt) {
         return scheduleRepository.findSchedulesByFilters(authorName, updatedAt);
+    }
+
+    @Override
+    public void deleteSchedule(Long id, String password) {
+        String savedPassword = scheduleRepository.findPasswordById(id);
+
+        if (!savedPassword.equals(password)) {
+            throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+        }
+
+        int deletedRow = scheduleRepository.deleteSchedule(id);
+
+        if (deletedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id);
+        }
     }
 }
