@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,10 +44,10 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
         // ResponseDto에 createdAt, updatedAt를 전달하기 위해, insert한 결과 조회
         String sql = "SELECT created_at, updated_at FROM schedule WHERE id = ?";
-        Map<String, Object> result = jdbcTemplate.queryForMap(sql, key);
+        Map<String, Object> result = jdbcTemplate.queryForMap(sql, key.longValue());
 
-        LocalDateTime createdAt = ((Timestamp) result.get("created_at")).toLocalDateTime();
-        LocalDateTime updatedAt = ((Timestamp) result.get("updated_at")).toLocalDateTime();
+        LocalDateTime createdAt = (LocalDateTime) result.get("created_at");
+        LocalDateTime updatedAt = (LocalDateTime) result.get("updated_at");
 
         return new ScheduleResponseDto(
                 key.longValue(),
@@ -103,6 +102,13 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     public int deleteSchedule(Long id) {
         String sql = "DELETE FROM schedule WHERE id = ?";
         return jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public boolean existById(Long id) {
+        String sql = "SELECT COUNT(*) FROM schedule WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        return count != null && count > 0;
     }
 
     private RowMapper<Schedule> scheduleRowMapper() {

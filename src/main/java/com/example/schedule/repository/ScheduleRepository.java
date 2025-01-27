@@ -15,4 +15,6 @@ public interface ScheduleRepository {
     String findPasswordById(Long id);
 
     int deleteSchedule(Long id);
+
+    boolean existById(Long id);
 }

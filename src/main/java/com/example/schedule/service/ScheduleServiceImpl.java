@@ -37,14 +37,16 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public void deleteSchedule(Long id, String password) {
-        String savedPassword = scheduleRepository.findPasswordById(id);
+        if (!scheduleRepository.existById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id);
+        }
 
+        String savedPassword = scheduleRepository.findPasswordById(id);
         if (!savedPassword.equals(password)) {
             throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
         }
 
         int deletedRow = scheduleRepository.deleteSchedule(id);
-
         if (deletedRow == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id);
         }
