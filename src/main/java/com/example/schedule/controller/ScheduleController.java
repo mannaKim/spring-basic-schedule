@@ -36,4 +36,13 @@ public class ScheduleController {
         List<ScheduleResponseDto> schedules = scheduleService.findSchedulesByFilters(authorName, updatedAt);
         return new ResponseEntity<>(schedules, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto dto
+    ) {
+        scheduleService.deleteSchedule(id, dto.getPassword());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

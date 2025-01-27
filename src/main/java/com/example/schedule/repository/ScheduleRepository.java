@@ -11,4 +11,10 @@ public interface ScheduleRepository {
     Schedule findScheduleByIdOrElseThrow(Long id);
 
     List<ScheduleResponseDto> findSchedulesByFilters(String authorName, String updatedAt);
+
+    String findPasswordById(Long id);
+
+    int deleteSchedule(Long id);
+
+    boolean existById(Long id);
 }
