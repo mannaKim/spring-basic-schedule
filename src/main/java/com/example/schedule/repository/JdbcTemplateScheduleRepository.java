@@ -111,6 +111,12 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         return count != null && count > 0;
     }
 
+    @Override
+    public int updateSchedule(Long id, String task, String authorName) {
+        String sql = "UPDATE schedule SET task = ?, author_name = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, task, authorName, id);
+    }
+
     private RowMapper<Schedule> scheduleRowMapper() {
         return new RowMapper<Schedule>() {
             @Override

@@ -17,4 +17,6 @@ public interface ScheduleRepository {
     int deleteSchedule(Long id);
 
     boolean existById(Long id);
+
+    int updateSchedule(Long id, String task, String authorName);
 }
