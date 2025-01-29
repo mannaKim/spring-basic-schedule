@@ -51,8 +51,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleResponseDto updateSchedule(Long id, String password, String task, String authorName) {
         validateScheduleAndPassword(id, password);
 
-        if (task == null || authorName == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The task and authorName are required values.");
+        if (task == null && authorName == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either task or authorName is required.");
         }
 
         int updatedRow = scheduleRepository.updateSchedule(id, task, authorName);
