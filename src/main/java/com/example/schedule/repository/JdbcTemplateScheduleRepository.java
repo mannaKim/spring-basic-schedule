@@ -28,7 +28,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public ScheduleResponseDto saveSchedule(Schedule schedule) {
+    public long saveSchedule(Schedule schedule) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("schedule")
                 .usingGeneratedKeyColumns("id");
@@ -40,22 +40,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         parameters.put("password", schedule.getPassword());
         parameters.put("task", schedule.getTask());
 
-        Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
-
-        // ResponseDto에 createdAt, updatedAt를 전달하기 위해, insert한 결과 조회
-        String sql = "SELECT created_at, updated_at FROM schedule WHERE id = ?";
-        Map<String, Object> result = jdbcTemplate.queryForMap(sql, key.longValue());
-
-        LocalDateTime createdAt = (LocalDateTime) result.get("created_at");
-        LocalDateTime updatedAt = (LocalDateTime) result.get("updated_at");
-
-        return new ScheduleResponseDto(
-                key.longValue(),
-                createdAt,
-                updatedAt,
-                schedule.getAuthorName(),
-                schedule.getTask()
-        );
+        return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters)).longValue();
     }
 
     @Override
