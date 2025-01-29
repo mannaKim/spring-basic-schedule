@@ -72,24 +72,24 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     @Override
     public List<ScheduleResponseDto> findSchedulesByFilters(String authorName, String updatedAt) {
-        String sql = "SELECT id, created_at, updated_at, author_name, task"
-                    + " FROM schedule"
-                    + " WHERE 1 = 1";
+        StringBuilder sql = new StringBuilder("SELECT id, created_at, updated_at, author_name, task"
+                + " FROM schedule"
+                + " WHERE 1 = 1");
         List<Object> params = new ArrayList<>();
 
         if (authorName != null) {
-            sql += " AND author_name = ?";
+            sql.append(" AND author_name = ?");
             params.add(authorName);
         }
 
         if (updatedAt != null) {
-            sql += " AND DATE_FORMAT(updated_at, '%Y-%m-%d') = ?";
+            sql.append(" AND DATE_FORMAT(updated_at, '%Y-%m-%d') = ?");
             params.add(updatedAt);
         }
 
-        sql += " ORDER BY updated_at DESC";
+        sql.append(" ORDER BY updated_at DESC");
 
-        return jdbcTemplate.query(sql, scheduleResponseDtoRowMapper(), params.toArray());
+        return jdbcTemplate.query(sql.toString(), scheduleResponseDtoRowMapper(), params.toArray());
     }
 
     @Override
@@ -109,6 +109,28 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         String sql = "SELECT COUNT(*) FROM schedule WHERE id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
         return count != null && count > 0;
+    }
+
+    @Override
+    public int updateSchedule(Long id, String task, String authorName) {
+        StringBuilder sql = new StringBuilder("UPDATE schedule SET");
+        List<Object> params = new ArrayList<>();
+
+        if (task != null) {
+            sql.append(" task = ?,");
+            params.add(task);
+        }
+
+        if (authorName != null) {
+            sql.append(" author_name = ?,");
+            params.add(authorName);
+        }
+
+        sql.setLength(sql.length() - 1); // 마지막 쉼표 제거
+        sql.append(" WHERE id = ?");
+        params.add(id);
+
+        return jdbcTemplate.update(sql.toString(), params.toArray());
     }
 
     private RowMapper<Schedule> scheduleRowMapper() {
