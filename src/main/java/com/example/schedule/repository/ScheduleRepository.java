@@ -8,9 +8,9 @@ import java.util.List;
 public interface ScheduleRepository {
     Long saveSchedule(Schedule schedule);
 
-    Schedule findScheduleByIdOrElseThrow(Long id);
+    ScheduleResponseDto findScheduleByIdOrElseThrow(Long id);
 
-    List<ScheduleResponseDto> findSchedulesByFilters(String authorName, String updatedAt);
+    List<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt);
 
     String findPasswordById(Long id);
 

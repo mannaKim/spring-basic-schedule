@@ -31,10 +31,10 @@ public class ScheduleController {
 
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findSchedulesByFilters(
-            @RequestParam(required = false) String authorName,
+            @RequestParam(required = false) Long authorId,
             @RequestParam(required = false) String updatedAt
     ) {
-        List<ScheduleResponseDto> schedules = scheduleService.findSchedulesByFilters(authorName, updatedAt);
+        List<ScheduleResponseDto> schedules = scheduleService.findSchedulesByFilters(authorId, updatedAt);
         return new ResponseEntity<>(schedules, HttpStatus.OK);
     }
 

@@ -29,19 +29,17 @@ public class ScheduleServiceImpl implements ScheduleService {
         Schedule schedule = new Schedule(dto);
         Long id = scheduleRepository.saveSchedule(schedule);
 
-        Schedule createdSchedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
-        return new ScheduleResponseDto(createdSchedule);
+        return scheduleRepository.findScheduleByIdOrElseThrow(id);
     }
 
     @Override
     public ScheduleResponseDto findScheduleById(Long id) {
-        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
-        return new ScheduleResponseDto(schedule);
+        return scheduleRepository.findScheduleByIdOrElseThrow(id);
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByFilters(String authorName, String updatedAt) {
-        return scheduleRepository.findSchedulesByFilters(authorName, updatedAt);
+    public List<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt) {
+        return scheduleRepository.findSchedulesByFilters(authorId, updatedAt);
     }
 
     @Override
@@ -68,8 +66,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id);
         }
 
-        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
-        return new ScheduleResponseDto(schedule);
+        return scheduleRepository.findScheduleByIdOrElseThrow(id);
     }
 
     private void validateScheduleAndPassword(Long id, String password) {
