@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/schedule")
+@RequestMapping("/api/schedules")
 public class ScheduleController {
     private final ScheduleService scheduleService;
 
@@ -21,7 +21,7 @@ public class ScheduleController {
 
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody @Valid ScheduleRequestDto dto) {
-        return new ResponseEntity<>(scheduleService.saveSchedule(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(scheduleService.createSchedule(dto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -31,10 +31,10 @@ public class ScheduleController {
 
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findSchedulesByFilters(
-            @RequestParam(required = false) String authorName,
+            @RequestParam(required = false) Long authorId,
             @RequestParam(required = false) String updatedAt
     ) {
-        List<ScheduleResponseDto> schedules = scheduleService.findSchedulesByFilters(authorName, updatedAt);
+        List<ScheduleResponseDto> schedules = scheduleService.findSchedulesByFilters(authorId, updatedAt);
         return new ResponseEntity<>(schedules, HttpStatus.OK);
     }
 

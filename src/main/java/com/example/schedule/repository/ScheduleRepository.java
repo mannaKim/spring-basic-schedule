@@ -6,11 +6,11 @@ import com.example.schedule.entity.Schedule;
 import java.util.List;
 
 public interface ScheduleRepository {
-    long saveSchedule(Schedule schedule);
+    Long saveSchedule(Schedule schedule);
 
-    Schedule findScheduleByIdOrElseThrow(Long id);
+    ScheduleResponseDto findScheduleByIdOrElseThrow(Long id);
 
-    List<ScheduleResponseDto> findSchedulesByFilters(String authorName, String updatedAt);
+    List<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt);
 
     String findPasswordById(Long id);
 
@@ -18,5 +18,7 @@ public interface ScheduleRepository {
 
     boolean existById(Long id);
 
-    int updateSchedule(Long id, String task, String authorName);
+    int updateSchedule(Long id, String task);
+
+    Long findAuthorIdByScheduleId(Long id);
 }
