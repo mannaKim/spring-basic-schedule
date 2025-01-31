@@ -11,4 +11,6 @@ public interface AuthorRepository {
     Author findAuthorByIdOrElseThrow(Long id);
 
     List<AuthorResponseDto> findAllAuthors();
+
+    boolean existById(Long id);
 }

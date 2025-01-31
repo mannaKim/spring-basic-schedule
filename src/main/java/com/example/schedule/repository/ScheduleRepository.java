@@ -6,7 +6,7 @@ import com.example.schedule.entity.Schedule;
 import java.util.List;
 
 public interface ScheduleRepository {
-    long saveSchedule(Schedule schedule);
+    Long saveSchedule(Schedule schedule);
 
     Schedule findScheduleByIdOrElseThrow(Long id);
 

@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,24 +27,24 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public long saveSchedule(Schedule schedule) {
+    public Long saveSchedule(Schedule schedule) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("schedule")
                 .usingGeneratedKeyColumns("id");
 
-        jdbcInsert.usingColumns("author_name", "password", "task");
+        jdbcInsert.usingColumns("author_id", "task", "password");
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("author_name", schedule.getAuthorName());
-        parameters.put("password", schedule.getPassword());
+        parameters.put("author_id", schedule.getAuthorId());
         parameters.put("task", schedule.getTask());
+        parameters.put("password", schedule.getPassword());
 
         return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters)).longValue();
     }
 
     @Override
     public Schedule findScheduleByIdOrElseThrow(Long id) {
-        String sql = "SELECT id, created_at, updated_at, author_name, password, task"
+        String sql = "SELECT id, author_id, task, password, created_at, updated_at"
                     + " FROM schedule"
                     + " WHERE id = ?";
         List<Schedule> result = jdbcTemplate.query(sql, scheduleRowMapper(), id);
@@ -57,13 +56,13 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     @Override
     public List<ScheduleResponseDto> findSchedulesByFilters(String authorName, String updatedAt) {
-        StringBuilder sql = new StringBuilder("SELECT id, created_at, updated_at, author_name, task"
+        StringBuilder sql = new StringBuilder("SELECT id, author_id, task, created_at, updated_at "
                 + " FROM schedule"
                 + " WHERE 1 = 1");
         List<Object> params = new ArrayList<>();
 
         if (authorName != null) {
-            sql.append(" AND author_name = ?");
+            sql.append(" AND author_id = ?");
             params.add(authorName);
         }
 
@@ -124,11 +123,11 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
             public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new Schedule(
                         rs.getLong("id"),
-                        rs.getTimestamp("created_at").toLocalDateTime(),
-                        rs.getTimestamp("updated_at").toLocalDateTime(),
-                        rs.getString("author_name"),
+                        rs.getLong("author_id"),
+                        rs.getString("task"),
                         rs.getString("password"),
-                        rs.getString("task")
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getTimestamp("updated_at").toLocalDateTime()
                 );
             }
         };
@@ -140,10 +139,10 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
             public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new ScheduleResponseDto(
                         rs.getLong("id"),
+                        rs.getLong("author_id"),
+                        rs.getString("task"),
                         rs.getTimestamp("created_at").toLocalDateTime(),
-                        rs.getTimestamp("updated_at").toLocalDateTime(),
-                        rs.getString("author_name"),
-                        rs.getString("task")
+                        rs.getTimestamp("updated_at").toLocalDateTime()
                 );
             }
         };

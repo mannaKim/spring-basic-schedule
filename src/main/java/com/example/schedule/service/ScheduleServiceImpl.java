@@ -3,6 +3,7 @@ package com.example.schedule.service;
 import com.example.schedule.dto.ScheduleRequestDto;
 import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.entity.Schedule;
+import com.example.schedule.repository.AuthorRepository;
 import com.example.schedule.repository.ScheduleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,15 +15,19 @@ import java.util.List;
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final AuthorRepository authorRepository;
 
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepository) {
+    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, AuthorRepository authorRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.authorRepository = authorRepository;
     }
 
     @Override
-    public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto) {
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto dto) {
+        validateAuthorId(dto.getAuthorId());
+
         Schedule schedule = new Schedule(dto);
-        long id = scheduleRepository.saveSchedule(schedule);
+        Long id = scheduleRepository.saveSchedule(schedule);
 
         Schedule createdSchedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
         return new ScheduleResponseDto(createdSchedule);
@@ -75,6 +80,12 @@ public class ScheduleServiceImpl implements ScheduleService {
         String savedPassword = scheduleRepository.findPasswordById(id);
         if (!savedPassword.equals(password)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다.");
+        }
+    }
+
+    private void validateAuthorId(Long authorId) {
+        if (!authorRepository.existById(authorId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist author_id = " + authorId);
         }
     }
 }

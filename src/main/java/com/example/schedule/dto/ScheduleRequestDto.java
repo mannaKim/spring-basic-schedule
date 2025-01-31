@@ -6,12 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class ScheduleRequestDto {
+    private Long authorId;
     private String authorName;
-
-    @NotNull(message = "Password is required.")
-    private String password;
 
     @NotNull(message = "Task is required.")
     @Size(max=200)
     private String task;
+
+    @NotNull(message = "Password is required.")
+    private String password;
 }

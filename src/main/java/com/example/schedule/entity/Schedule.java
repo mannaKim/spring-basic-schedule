@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Schedule {
     private Long id;
+    private Long authorId;
+    private String task;
+    private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String authorName;
-    private String password;
-    private String task;
 
     public Schedule(ScheduleRequestDto dto) {
-        this.authorName = dto.getAuthorName();
+        this.authorId = dto.getAuthorId();
         this.password = dto.getPassword();
         this.task = dto.getTask();
     }

@@ -64,6 +64,13 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
                 .toList();
     }
 
+    @Override
+    public boolean existById(Long id) {
+        String sql = "SELECT COUNT(*) FROM author WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        return count != null && count > 0;
+    }
+
     private RowMapper<Author> authorRowMapper() {
         return new RowMapper<Author>() {
             @Override
