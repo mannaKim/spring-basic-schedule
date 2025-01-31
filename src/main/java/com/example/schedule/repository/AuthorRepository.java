@@ -13,4 +13,6 @@ public interface AuthorRepository {
     List<AuthorResponseDto> findAllAuthors();
 
     boolean existById(Long id);
+
+    int updateAuthorName(Long id, String name);
 }

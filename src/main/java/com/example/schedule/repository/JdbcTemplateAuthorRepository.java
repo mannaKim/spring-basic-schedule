@@ -71,6 +71,12 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
         return count != null && count > 0;
     }
 
+    @Override
+    public int updateAuthorName(Long id, String name) {
+        String sql = "UPDATE author SET name = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, name, id);
+    }
+
     private RowMapper<Author> authorRowMapper() {
         return new RowMapper<Author>() {
             @Override

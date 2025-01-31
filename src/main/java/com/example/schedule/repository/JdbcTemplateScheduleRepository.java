@@ -100,25 +100,23 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public int updateSchedule(Long id, String task, String authorName) {
+    public int updateSchedule(Long id, String task) {
         StringBuilder sql = new StringBuilder("UPDATE schedule SET");
         List<Object> params = new ArrayList<>();
 
-        if (task != null) {
-            sql.append(" task = ?,");
-            params.add(task);
-        }
+        sql.append(" task = ?");
+        params.add(task);
 
-        if (authorName != null) {
-            sql.append(" author_name = ?,");
-            params.add(authorName);
-        }
-
-        sql.setLength(sql.length() - 1); // 마지막 쉼표 제거
         sql.append(" WHERE id = ?");
         params.add(id);
 
         return jdbcTemplate.update(sql.toString(), params.toArray());
+    }
+
+    @Override
+    public Long findAuthorIdByScheduleId(Long id) {
+        String sql = "SELECT author_id FROM schedule WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, Long.class, id);
     }
 
     private RowMapper<ScheduleResponseDto> scheduleResponseDtoRowMapper() {

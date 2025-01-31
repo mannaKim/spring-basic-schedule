@@ -61,9 +61,19 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either task or authorName is required.");
         }
 
-        int updatedRow = scheduleRepository.updateSchedule(id, task, authorName);
-        if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id);
+        if (task != null) {
+            int updatedRow = scheduleRepository.updateSchedule(id, task);
+            if (updatedRow == 0) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id);
+            }
+        }
+
+        if (authorName != null) {
+            Long authorId = scheduleRepository.findAuthorIdByScheduleId(id);
+            int updatedRow = authorRepository.updateAuthorName(authorId, authorName);
+            if (updatedRow == 0) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist author_id  = " + authorId);
+            }
         }
 
         return scheduleRepository.findScheduleByIdOrElseThrow(id);
