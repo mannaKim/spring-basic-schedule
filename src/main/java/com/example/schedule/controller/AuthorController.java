@@ -3,6 +3,7 @@ package com.example.schedule.controller;
 import com.example.schedule.dto.AuthorRequestDto;
 import com.example.schedule.dto.AuthorResponseDto;
 import com.example.schedule.service.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody AuthorRequestDto dto) {
+    public ResponseEntity<AuthorResponseDto> createAuthor(@Valid @RequestBody AuthorRequestDto dto) {
         return new ResponseEntity<>(authorService.createAuthor(dto), HttpStatus.CREATED);
     }
 

@@ -4,11 +4,14 @@ import com.example.schedule.dto.ScheduleRequestDto;
 import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +24,7 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody @Valid ScheduleRequestDto dto) {
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@Valid @RequestBody ScheduleRequestDto dto) {
         return new ResponseEntity<>(scheduleService.createSchedule(dto), HttpStatus.CREATED);
     }
 
@@ -45,7 +48,7 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSchedule(
             @PathVariable Long id,
-            @RequestBody @Valid ScheduleRequestDto dto
+            @RequestBody ScheduleRequestDto dto
     ) {
         scheduleService.deleteSchedule(id, dto.getPassword());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -54,7 +57,7 @@ public class ScheduleController {
     @PatchMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> updateSchedule(
             @PathVariable Long id,
-            @RequestBody @Valid ScheduleRequestDto dto
+            @RequestBody ScheduleRequestDto dto
     ) {
         ScheduleResponseDto responseDto = scheduleService.updateSchedule(id, dto.getPassword(), dto.getTask(), dto.getAuthorName());
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
