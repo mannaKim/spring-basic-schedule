@@ -3,15 +3,17 @@ package com.example.schedule.service;
 import com.example.schedule.dto.ScheduleRequestDto;
 import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.entity.Schedule;
+import com.example.schedule.exception.custom.AuthorNotFoundException;
+import com.example.schedule.exception.custom.InvalidPasswordException;
+import com.example.schedule.exception.custom.InvalidRequestException;
+import com.example.schedule.exception.custom.ScheduleNotFoundException;
 import com.example.schedule.repository.AuthorRepository;
 import com.example.schedule.repository.ScheduleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         int deletedRow = scheduleRepository.deleteSchedule(id);
         if (deletedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id);
+            throw new ScheduleNotFoundException();
         }
     }
 
@@ -63,13 +65,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         validateScheduleAndPassword(id, password);
 
         if (task == null && authorName == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either task or authorName is required.");
+            throw new InvalidRequestException();
         }
 
         if (task != null) {
             int updatedRow = scheduleRepository.updateSchedule(id, task);
             if (updatedRow == 0) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id);
+                throw new ScheduleNotFoundException();
             }
         }
 
@@ -77,7 +79,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             Long authorId = scheduleRepository.findAuthorIdByScheduleId(id);
             int updatedRow = authorRepository.updateAuthorName(authorId, authorName);
             if (updatedRow == 0) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist author_id  = " + authorId);
+                throw new AuthorNotFoundException(authorId);
             }
         }
 
@@ -86,18 +88,18 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private void validateScheduleAndPassword(Long id, String password) {
         if (!scheduleRepository.existById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+            throw new ScheduleNotFoundException();
         }
 
         String savedPassword = scheduleRepository.findPasswordById(id);
         if (!savedPassword.equals(password)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다.");
+            throw new InvalidPasswordException();
         }
     }
 
     private void validateAuthorId(Long authorId) {
         if (!authorRepository.existById(authorId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist author_id = " + authorId);
+            throw new AuthorNotFoundException(authorId);
         }
     }
 }
