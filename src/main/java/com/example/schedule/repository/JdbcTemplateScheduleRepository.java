@@ -2,6 +2,7 @@ package com.example.schedule.repository;
 
 import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.entity.Schedule;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -57,7 +58,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt) {
+    public List<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt, Pageable pageable) {
         StringBuilder sql = new StringBuilder("SELECT s.id, s.author_id, a.name AS author_name,"
                 + " s.task, s.password, s.created_at, s.updated_at"
                 + " FROM schedule s"
@@ -76,6 +77,9 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         }
 
         sql.append(" ORDER BY s.updated_at DESC");
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(pageable.getPageSize());
+        params.add(pageable.getOffset());
 
         return jdbcTemplate.query(sql.toString(), scheduleResponseDtoRowMapper(), params.toArray());
     }
@@ -117,6 +121,13 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     public Long findAuthorIdByScheduleId(Long id) {
         String sql = "SELECT author_id FROM schedule WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, Long.class, id);
+    }
+
+    @Override
+    public long countSchedules() {
+        String sql = "SELECT COUNT(*) FROM schedule";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class);
+        return (count != null) ? count : 0L;
     }
 
     private RowMapper<ScheduleResponseDto> scheduleResponseDtoRowMapper() {

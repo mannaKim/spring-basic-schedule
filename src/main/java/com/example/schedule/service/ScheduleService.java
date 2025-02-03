@@ -2,15 +2,15 @@ package com.example.schedule.service;
 
 import com.example.schedule.dto.ScheduleRequestDto;
 import com.example.schedule.dto.ScheduleResponseDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ScheduleService {
     ScheduleResponseDto createSchedule(ScheduleRequestDto dto);
 
     ScheduleResponseDto findScheduleById(Long id);
 
-    List<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt);
+    Page<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt, Pageable pageable);
 
     void deleteSchedule(Long id, String password);
 

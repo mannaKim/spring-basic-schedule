@@ -5,6 +5,9 @@ import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.entity.Schedule;
 import com.example.schedule.repository.AuthorRepository;
 import com.example.schedule.repository.ScheduleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +41,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt) {
-        return scheduleRepository.findSchedulesByFilters(authorId, updatedAt);
+    public Page<ScheduleResponseDto> findSchedulesByFilters(Long authorId, String updatedAt, Pageable pageable) {
+        long totalCount = scheduleRepository.countSchedules();
+        List<ScheduleResponseDto> schedules = scheduleRepository.findSchedulesByFilters(authorId, updatedAt, pageable);
+        return new PageImpl<>(schedules, pageable, totalCount);
     }
 
     @Override
