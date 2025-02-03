@@ -55,7 +55,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         int deletedRow = scheduleRepository.deleteSchedule(id);
         if (deletedRow == 0) {
-            throw new ScheduleNotFoundException();
+            throw new ScheduleNotFoundException(id);
         }
     }
 
@@ -71,7 +71,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (task != null) {
             int updatedRow = scheduleRepository.updateSchedule(id, task);
             if (updatedRow == 0) {
-                throw new ScheduleNotFoundException();
+                throw new ScheduleNotFoundException(id);
             }
         }
 
@@ -88,7 +88,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private void validateScheduleAndPassword(Long id, String password) {
         if (!scheduleRepository.existById(id)) {
-            throw new ScheduleNotFoundException();
+            throw new ScheduleNotFoundException(id);
         }
 
         String savedPassword = scheduleRepository.findPasswordById(id);

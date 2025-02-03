@@ -2,13 +2,12 @@ package com.example.schedule.repository;
 
 import com.example.schedule.dto.AuthorResponseDto;
 import com.example.schedule.entity.Author;
-import org.springframework.http.HttpStatus;
+import com.example.schedule.exception.custom.AuthorNotFoundException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -49,7 +48,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
 
         return result.stream()
                 .findAny()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id));
+                .orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @Override
