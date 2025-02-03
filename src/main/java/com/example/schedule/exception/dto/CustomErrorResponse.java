@@ -13,10 +13,10 @@ public class CustomErrorResponse {
     private final String message;
     private final LocalDateTime timestamp;
 
-    public static CustomErrorResponse of(CustomErrorCode errorCode) {
+    public static CustomErrorResponse of(CustomErrorCode errorCode, String customMessage) {
         return new CustomErrorResponse(
                 errorCode.getHttpStatus().value(),
-                errorCode.getMessage(),
+                (customMessage != null) ? customMessage : errorCode.getMessage(),
                 LocalDateTime.now()
         );
     }

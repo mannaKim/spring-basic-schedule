@@ -2,6 +2,8 @@ package com.example.schedule.repository;
 
 import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.entity.Schedule;
+import com.example.schedule.exception.custom.AuthorNotFoundException;
+import com.example.schedule.exception.custom.ScheduleNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -54,7 +56,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
         return result.stream()
                 .findAny()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dose not exist id = " + id));
+                .orElseThrow(() -> new ScheduleNotFoundException(id));
     }
 
     @Override
